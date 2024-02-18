@@ -42,7 +42,7 @@ const Table = ({ infoData }) => {
         value={search}
         onChange={(e) => handleSearch(e)}
       />
-      {sortedAndFilteredData.length === 0 ? (
+      {sortedAndFilteredData && sortedAndFilteredData?.length === 0 ? (
         <p>No data found</p>
       ) : (
         <table className="table">
