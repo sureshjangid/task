@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 const Table = ({ infoData }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [sortType, setSortType] = useState(''); // '' for default, 'asc' for ascending, 'desc' for descending
-  const [sortBy, setSortBy] = useState('title'); // Default sorting by title
+  const [sortType, setSortType] = useState(''); // default==> , 'asc' for ascending, 'desc' for descending
+  const [sortBy, setSortBy] = useState('title'); // sorting by ==> title
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
     setPage(1); 
   };
 
-  // sort with title
+  // Sort with title
   const handleSort = (column) => {
     if (column === sortBy) {
       setSortType(sortType === 'asc' ? 'desc' : 'asc');
@@ -21,7 +21,7 @@ const Table = ({ infoData }) => {
     }
   };
 
-// sort with filter
+  // Sort with filter and handle no data found
   const sortedAndFilteredData = infoData?.data
     .filter((item) => item.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
@@ -42,29 +42,31 @@ const Table = ({ infoData }) => {
         value={search}
         onChange={(e) => handleSearch(e)}
       />
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col" onClick={() => handleSort('title')} style={{ cursor: 'pointer' }}>
-              Title {sortBy === 'title' && (sortType === 'asc' ? '↑' : '↓')}
-            </th>
-            <th scope="col">Body</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedAndFilteredData.slice((page - 1) * 10, page * 10).map((a, i) => {
-            const { id, title, body } = a;
-            return (
-              <tr key={id}>
-                <th scope="row">{id}</th>
-                <td>{title}</td>
-                <td>{body}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      {sortedAndFilteredData.length === 0 ? (
+        <p>No data found</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col" onClick={() => handleSort('title')} style={{ cursor: 'pointer' }}>
+                Title {sortBy === 'title' && (sortType === 'asc' ? '↑' : '↓')}
+              </th>
+              <th scope="col">Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedAndFilteredData && sortedAndFilteredData?.slice((page - 1) * 10, page * 10).map((a, i) => {
+              const { id, title, body } = a;
+              return (
+                <tr key={id}>
+                  <td>{title}</td>
+                  <td>{body}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
 
       {/* Pagination  */}
       {infoData && infoData?.data.length > 0 && (
